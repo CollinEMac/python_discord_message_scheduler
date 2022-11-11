@@ -12,15 +12,16 @@ intents = discord.Intents.all()
 # All command start with a "!"
 client = commands.Bot(command_prefix="!", intents=intents)
 
-message = 'default message'
+message = ""
 channel = None
 
-def set_channel_and_message(ctx, msg):
+def set_channel_and_message(ctx, msg_fragments):
     """
     Set the message and channels so the tasks have access to them.
     """
     global message
-    message = msg
+    for fragment in msg_fragments:
+        message += fragment + " "
     global channel
     channel = ctx.channel
 
@@ -41,20 +42,20 @@ async def on_ready():
 #     await channel.send('Created a test message')
 
 @client.command(name="daily_message")
-async def daily_message(ctx, msg):
+async def daily_message(ctx, *args):
     """
     Command to set a daily message
     """
-    set_channel_and_message(ctx, msg)
+    set_channel_and_message(ctx, args)
     daily_job.start()
     await channel.send('Created a daily message')
 
 @client.command(name="weekly_message")
-async def weekly_message(ctx, msg):
+async def weekly_message(ctx, *args):
     """
     Command to set a weekly message
     """
-    set_channel_and_message(ctx, msg)
+    set_channel_and_message(ctx, args)
     weekly_job.start()
     await channel.send('Created a weekly message')
 
